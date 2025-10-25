@@ -441,7 +441,7 @@ export default function ClientAccountPage() {
 
           {/* RIGHT SIDE CHAT */}
           <div className="lg:sticky lg:top-8">
-            <RelationshipChatPanel companyId={clientRecord.name} />
+            <RelationshipChatPanel companyId={contextualKey} />
           </div>
         </div>
       </section>
