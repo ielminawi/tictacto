@@ -54,7 +54,7 @@ const Index = () => {
             {/* Clients Column */}
             <div className="space-y-6 pr-8">
               <h3 className="text-2xl font-semibold text-foreground text-center">Clients</h3>
-              <div className="space-y-6">
+              <div className="space-y-16">
                 {/* TODO: Replace mockClients with real data from API/database */}
                 {/* Example API call: const clients = await fetchClients(); */}
                 {mockClients.map((client) => (
@@ -69,7 +69,7 @@ const Index = () => {
             {/* Internal Information Column */}
             <div className="space-y-6 pl-8">
               <h3 className="text-2xl font-semibold text-foreground text-center">Internal Knowledge</h3>
-              <div className="space-y-6">
+              <div className="space-y-16">
                 {/* TODO: Replace mockInternalProjects with real data from API/database */}
                 {/* Example API call: const projects = await fetchInternalProjects(); */}
                 {mockInternalProjects.map((project) => (
