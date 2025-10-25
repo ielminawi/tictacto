@@ -1,7 +1,10 @@
-import argparse
+import asyncio
+import json
 import os
 import sys
+import time
 from typing import Any
+from pathlib import Path
 
 from dotenv import load_dotenv
 from livekit.agents import (
@@ -299,8 +302,112 @@ class OpenAIEnhancedAgent(Agent):
         }
 
 
+async def process_chat_message(message: str, ctx: JobContext) -> str:
+    """Process a chat message using the agent's tools"""
+    try:
+        # Initialize documents if not already done
+        docs_directory = "../infos"
+        docs_initialized = initialize_multi_documents(docs_directory)
+        
+        if not docs_initialized:
+            return "Sorry, I couldn't load the documents. Please check if the 'infos' directory exists and contains valid files."
+        
+        # Initialize OpenAI RAG
+        openai_api_key = os.environ.get('OPENAI_API_KEY')
+        if openai_api_key:
+            openai_rag = OpenAIEnhancedRAG(openai_api_key)
+            
+            processor = get_multi_doc_processor()
+            if processor:
+                documents = []
+                for doc in processor.documents:
+                    documents.append({
+                        'file_name': doc.file_name,
+                        'file_type': doc.file_type,
+                        'pages': doc.pages
+                    })
+                
+                openai_rag.load_documents(documents, use_cache=True)
+                
+                # Use OpenAI RAG for intelligent search
+                search_results = openai_rag.intelligent_search(message)
+                
+                if search_results.get('found', False):
+                    # Format the response nicely
+                    response = f"I found information about '{message}':\n\n"
+                    
+                    for insight in search_results['key_insights'][:3]:  # Limit to top 3 results
+                        response += f"📄 **{insight['file_name']}** (Page {insight['page_number']})\n"
+                        response += f"{insight['content'][:200]}...\n\n"
+                    
+                    response += f"\nSummary: {search_results['summary']}"
+                    return response
+                else:
+                    return f"I couldn't find specific information about '{message}' in the documents. Could you try rephrasing your question or ask about something else?"
+        
+        # Fallback to basic search
+        processor = get_multi_doc_processor()
+        if processor:
+            results = processor.search_all_documents(message)
+            if results:
+                response = f"I found {len(results)} results for '{message}':\n\n"
+                for result in results[:3]:
+                    response += f"📄 **{result['file_name']}** (Page {result['page_number']})\n"
+                    response += f"{result['context'][:200]}...\n\n"
+                return response
+            else:
+                return f"I couldn't find information about '{message}' in the documents."
+        else:
+            return "Documents not loaded. Please check the setup."
+            
+    except Exception as e:
+        print(f"❌ Error processing chat message: {e}")
+        return f"Sorry, I encountered an error while processing your message: {str(e)}"
+
+
 async def entrypoint(ctx: JobContext) -> None:
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+    target_url = os.environ.get('LIVEKIT_URL', 'UNKNOWN_URL')
+    print(f"🔌 Connecting to LiveKit at {target_url}")
+    try:
+        await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+    except Exception as exc:
+        print(f"❌ Failed to connect to LiveKit ({target_url}): {exc}")
+        raise
+    
+    # Handle data messages for text chat
+    async def handle_data_message(data_packet, participant):
+        try:
+            # Decode the data
+            message_data = data_packet.data.decode('utf-8')
+            data = json.loads(message_data)
+            
+            print(f"📨 Received data from {participant.identity}: {data}")
+            
+            if data.get('type') == 'chat_message':
+                message = data.get('message', '')
+                print(f"💬 Chat message: {message}")
+                
+                # Process the message with the agent's tools
+                response = await process_chat_message(message, ctx)
+                
+                # Send response back
+                response_data = json.dumps({
+                    'type': 'agent_response',
+                    'message': response,
+                    'timestamp': time.time()
+                })
+                
+                # Send response to the participant
+                await participant.publish_data(
+                    response_data.encode('utf-8'),
+                    topic="chat"
+                )
+        except Exception as e:
+            print(f"❌ Error handling data message: {e}")
+
+    @ctx.room.on("data_received")
+    def on_data_received(data_packet, participant):
+        asyncio.create_task(handle_data_message(data_packet, participant))
 
     voice_agent_session = AgentSession(
         llm=openai.realtime.RealtimeModel(
@@ -386,7 +493,33 @@ async def entrypoint(ctx: JobContext) -> None:
 
 
 if __name__ == "__main__":
-    load_dotenv("keys.env")
+    env_path = Path(__file__).resolve().parent / "keys.env"
+    if not env_path.exists():
+        raise FileNotFoundError(
+            f"keys.env not found at {env_path}. Please create it with your credentials."
+        )
+
+    load_dotenv(env_path.as_posix())
+
+    livekit_url = os.environ.get("LIVEKIT_URL")
+    livekit_api_key = os.environ.get("LIVEKIT_API_KEY")
+    livekit_api_secret = os.environ.get("LIVEKIT_API_SECRET")
+
+    missing = [
+        name
+        for name, value in [
+            ("LIVEKIT_URL", livekit_url),
+            ("LIVEKIT_API_KEY", livekit_api_key),
+            ("LIVEKIT_API_SECRET", livekit_api_secret),
+        ]
+        if not value
+    ]
+    if missing:
+        raise RuntimeError(
+            "Missing LiveKit credentials: "
+            + ", ".join(missing)
+            + ". Ensure keys.env contains these values."
+        )
 
     sys.argv = [sys.argv[0], "dev"]  # overwrite args for the LiveKit CLI
     cli.run_app(
