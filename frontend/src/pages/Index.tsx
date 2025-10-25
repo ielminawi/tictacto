@@ -18,21 +18,9 @@ const Index = () => {
   const [displayedText, setDisplayedText] = useState("");
   const [organizationType, setOrganizationType] = useState<"client" | "internal">("client");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const fullText = "When a new buyer takes over an account, they have zero context. The supplier is frustrated explaining everything again. TicTacTo captures every email, call, and meeting to build an intelligent timeline with instant search. But here's the difference: we make data accessible in multiple forms—because every person consumes information differently. Choose between Chatbot, Knowledge Graph, Avatar, or Reels.";
+  //const fullText = "When a new buyer takes over an account, they have zero context. The supplier is frustrated explaining everything again. TicTacTo captures every email, call, and meeting to build an intelligent timeline with instant search. But here's the difference: we make data accessible in multiple forms—because every person consumes information differently. Choose between Chatbot, Knowledge Graph, Avatar, or Reels.";
   
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < fullText.length) {
-        setDisplayedText(fullText.slice(0, index + 1));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 20);
-    
-    return () => clearInterval(timer);
-  }, []);
+
 
 
   return (
@@ -49,24 +37,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Overview Section with Typewriter Effect */}
-      <section className="container mx-auto px-6 py-16 max-w-5xl">
-        <div className="bg-card border border-border rounded-lg p-12">
-          <p className="text-lg md:text-xl text-foreground font-mono leading-relaxed">
-            {displayedText}<span className="animate-pulse">|</span>
-          </p>
-        </div>
-      </section>
-
       {/* Organizations Section */}
       <section className="container mx-auto px-6 py-24 max-w-7xl">
         <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-              Organizations
+              Eco-system
             </h2>
             <p className="text-xl text-muted-foreground font-light max-w-2xl mx-auto">
-              Select an organization to access their relationship intelligence
+              Select an organization to access their context
             </p>
           </div>
 
@@ -89,7 +68,7 @@ const Index = () => {
 
             {/* Internal Information Column */}
             <div className="space-y-6 pl-8">
-              <h3 className="text-2xl font-semibold text-foreground text-center">Internal Information</h3>
+              <h3 className="text-2xl font-semibold text-foreground text-center">Internal Knowledge</h3>
               <div className="space-y-6">
                 {/* TODO: Replace mockInternalProjects with real data from API/database */}
                 {/* Example API call: const projects = await fetchInternalProjects(); */}

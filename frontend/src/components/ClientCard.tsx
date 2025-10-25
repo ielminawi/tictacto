@@ -34,9 +34,9 @@ export const ClientCard = ({ client }: ClientCardProps) => {
         
         <div className="relative space-y-6">
           {/* Company Icon/Logo */}
-          <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center">
+          <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
             {client.logo ? (
-              <img src={client.logo} alt={client.name} className="w-12 h-12 object-contain" />
+              <img src={client.logo} alt={client.name} className="w-full h-full object-contain" />
             ) : (
               <Building2 className="w-8 h-8 text-muted-foreground" />
             )}
