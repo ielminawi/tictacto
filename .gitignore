@@ -1,0 +1,49 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+*.sqlite3
+*.db
+
+# ---- Virtual environments ----
+venv/
+tic_venv/
+.env/
+.env
+*.env
+
+# ---- Environment and config ----
+# Do not commit OpenAI keys or credentials
+backend/.env
+frontend/.env
+*.key
+*.pem
+
+# ---- OS / Editor files ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ---- Build / cache ----
+dist/
+build/
+*.egg-info/
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# ---- Lovable Frontend ----
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/out/
+frontend/.DS_Store
+
+# ---- Logs ----
+*.log
+logs/
