@@ -43,10 +43,24 @@ class OpenAIEnhancedAgent(Agent):
         try:
             print("🔄 Initializing OpenAI RAG system...")
             
-            # First, load documents if not already loaded
-            docs_directory = "infos"
+            # Initialize OpenAI RAG first (fast)
+            self.openai_rag = OpenAIEnhancedRAG(self.openai_api_key)
+            
+            # Load documents asynchronously (this will be slow)
+            docs_directory = "../infos"
             print(f"🔄 Loading documents from: {docs_directory}")
-            docs_initialized = initialize_multi_documents(docs_directory)
+            
+            # Create a task to load documents in the background
+            import asyncio
+            doc_task = asyncio.create_task(self._load_documents_async(docs_directory))
+            
+            # Wait for documents to load (with timeout)
+            try:
+                docs_initialized = await asyncio.wait_for(doc_task, timeout=30.0)
+            except asyncio.TimeoutError:
+                print("⏰ Document loading timed out, will retry on next query")
+                self.documents_loaded = False
+                return
             
             if not docs_initialized:
                 print(f"❌ Failed to load documents from: {docs_directory}")
@@ -57,9 +71,8 @@ class OpenAIEnhancedAgent(Agent):
             docs_summary = get_multi_doc_processor().get_document_summary()
             print(f"📚 Documents Summary: {docs_summary['total_documents']} files, {docs_summary['total_pages']} pages, {docs_summary['total_words']} words")
             
-            # Now initialize OpenAI RAG
-            self.openai_rag = OpenAIEnhancedRAG(self.openai_api_key)
-            
+            # Load documents with OpenAI embeddings (use cache if available)
+            print("🔄 Loading OpenAI embeddings...")
             processor = get_multi_doc_processor()
             if processor:
                 # Convert documents to the format expected by OpenAI RAG
@@ -71,8 +84,6 @@ class OpenAIEnhancedAgent(Agent):
                         'pages': doc.pages
                     })
                 
-                # Load documents with OpenAI embeddings (use cache if available)
-                print("🔄 Loading OpenAI embeddings...")
                 self.documents_loaded = self.openai_rag.load_documents(documents, use_cache=True)
                 
                 if self.documents_loaded:
@@ -85,6 +96,14 @@ class OpenAIEnhancedAgent(Agent):
         except Exception as e:
             print(f"❌ Error initializing OpenAI RAG: {e}")
             self.documents_loaded = False
+    
+    async def _load_documents_async(self, docs_directory: str) -> bool:
+        """Load documents asynchronously."""
+        import asyncio
+        
+        # Run the synchronous document loading in a thread pool
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, initialize_multi_documents, docs_directory)
     
     @function_tool()
     async def intelligent_search(self, context: RunContext, query: str) -> dict[str, Any]:
