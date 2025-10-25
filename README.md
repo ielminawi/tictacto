@@ -1,31 +1,87 @@
-# galactacto
+# Galactactocus Voice Agent
 
-Local helper scripts and frontend to run the Galactactocus LiveKit agent with a custom browser client.
+Galactactocus is a LiveKit-powered voice assistant that answers document questions using an OpenAI RAG pipeline, drives a Bey avatar for video responses, and ships with a React frontend for real-time chat.
+
+## Highlights
+- LiveKit Realtime Agent (`AGENT/main.py`) with document-aware tools and Bey avatar integration
+- Lightweight token server for browser clients (`AGENT/token_server.py`)
+- React + Vite frontend (`frontend/`) built on `@livekit/components-react`
+- Multi-document ingestion utilities in `infos/` consumed by the OpenAI-enhanced RAG
+
+## Repository Layout
+- `AGENT/` – Python agent, token server, and supporting RAG utilities
+- `frontend/` – Vite React client (joins LiveKit room, renders audio/video/chat)
+- `infos/` – Source PDFs/text files indexed at runtime
+- `agent_worker.py` – Minimal sample worker for quick Bey avatar tests
+- `requirements.txt` – Python dependencies shared across agent scripts
 
 ## Prerequisites
-- Python 3.11+
-- Node not required (frontend served as vanilla static assets)
-- Populate `AGENT/keys.env` with your LiveKit/OpenAI/Bey credentials
-- Install Python dependencies: `pip install -r requirements.txt`
+- Python 3.11 or newer
+- Node.js 18+ (for the Vite dev server)
+- Accounts/API keys for LiveKit, OpenAI, and Bey avatars
 
-## Running the agent
-1. `cd AGENT`
-2. `python main.py`
-   - The agent connects to the room specified by the LiveKit CLI when you start it.
+## Environment Variables
+Create `AGENT/keys.env` (and optionally copy it to the repo root) with:
 
-## Serving the frontend + token endpoint
-1. In a separate terminal: `cd AGENT`
-2. `python token_server.py --port 8080`
-   - Serves static frontend files from `../frontend`
-   - Provides `/token?identity=<name>&room=<room>` for LiveKit access tokens
+```
+LIVEKIT_URL=wss://<your-livekit>.livekit.cloud
+LIVEKIT_API_KEY=...
+LIVEKIT_API_SECRET=...
+LIVEKIT_DEFAULT_ROOM=galactactocus-room      # optional override
+OPENAI_API_KEY=...
+BEY_API_KEY=...
+BEY_AVATAR_ID=...
+```
 
-## Using the browser client
-1. Open `http://localhost:8080` in your browser
-2. Enter the room name the agent will join (defaults to `galactactocus-room`)
-3. Choose a display name and click **Connect**
-4. Type messages in the chat pane; the agent replies using the Bey avatar video stream
+> Do **not** commit credentials to version control.
+
+## Installation
+```bash
+# Python deps
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Frontend deps
+cd frontend
+npm install
+```
+
+## Running the Stack
+1. **Start the LiveKit agent**
+   ```bash
+   cd AGENT
+   python main.py
+   ```
+   Logs confirm connection to the LiveKit cloud project and show data/chat events.
+
+2. **Launch the token server** (serves `/token` for the frontend)
+   ```bash
+   cd AGENT
+   python token_server.py --port 8081
+   ```
+   Adjust the port as needed; the server serves static assets and mints JWTs.
+
+3. **Run the React client**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+   Open the printed Vite URL (defaults to `http://127.0.0.1:5173`). Update `frontend/src/App.jsx` to fetch a token from `http://localhost:8081/token` instead of using the placeholder JWT.
+
+4. **Chat**
+   - Enter the same room name in the frontend that the agent joins (default `galactactocus-room`).
+   - Send chat messages; the agent replies via data packets and renders the Bey avatar’s audio/video streams.
+
+## Additional Scripts
+- `agent_worker.py` – Simple example that starts an `AgentSession` with minimal instructions, useful for smoke tests without the full RAG pipeline.
 
 ## Troubleshooting
-- Ensure the agent process is running and has joined the same room as your browser client
-- The token server prints helpful logs — check them if token requests fail
-- If your browser cannot connect, verify that the LiveKit credentials in `keys.env` are valid and have matching project/tenant access
+- **Authentication** – Confirm `AGENT/keys.env` is loaded (the agent logs missing credentials). Regenerate LiveKit API keys if tokens are rejected.
+- **Token issues** – The React app must request a fresh token; placeholder JWTs expire quickly. Watch the token server logs for failures.
+- **Document loading** – Ensure `infos/` contains readable PDFs or text files; initialization logs display counts and errors.
+- **Room mismatch** – The agent, token server, and browser must reference the same `room` string.
+
+## Next Steps
+- Wire the React client to call the token endpoint automatically.
+- Harden the token server (HTTPS, stricter CORS) before deploying beyond local environments.
