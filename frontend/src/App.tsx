@@ -9,6 +9,7 @@ import Avatar from "./pages/Avatar";
 import KnowledgeGraph from "./pages/KnowledgeGraph";
 import Reels from "./pages/Reels";
 import ClientDetail from "./pages/ClientDetail";
+import ClientAccountPage from "./pages/ClientAccountPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,7 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/client/:clientId" element={<ClientDetail />} />
+          <Route path="/client/:clientId" element={<ClientAccountPage />} />
           <Route path="/client/:clientId/chatbot" element={<Chatbot />} />
           <Route path="/client/:clientId/avatar" element={<Avatar />} />
           <Route path="/client/:clientId/knowledge-graph" element={<KnowledgeGraph />} />

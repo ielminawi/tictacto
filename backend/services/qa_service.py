@@ -10,14 +10,16 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # ---- import all known account contexts here ----
-from backend.context import techparts_context
+from backend.context import techparts_context, tacto_context, google_context, x_context, meta_context
 # in the future you'd also import altus_context, acme_context, etc.
 
 # registry maps company_id -> the module (so we can scale)
 ACCOUNT_REGISTRY: Dict[str, object] = {
     techparts_context.COMPANY_ID: techparts_context,
-    # "altus": altus_context,
-    # "acme": acme_context,
+    tacto_context.COMPANY_ID: tacto_context,
+    google_context.COMPANY_ID: google_context,
+    x_context.COMPANY_ID: x_context,
+    meta_context.COMPANY_ID: meta_context,
 }
 
 
