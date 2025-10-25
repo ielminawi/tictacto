@@ -113,10 +113,6 @@ for r in kg.get("relations", []):
         evidence=r.get("evidence","")
     )
 
-# Export graph files
-nx.write_graphml(G, "out/kg.graphml")
-nx.write_gexf(G, "out/kg.gexf")
-
 # Quick interactive HTML (hover shows evidence)
 net = Network(height="720px", width="100%", directed=True, bgcolor="#ffffff")
 
