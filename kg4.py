@@ -40,7 +40,7 @@ class KnowledgeGraph(BaseModel):
 
 create_json = 1
 if create_json:
-    client = OpenAI(api_key="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")  # or OpenAI(api_key="sk-...")
+    client = OpenAI(api_key="sk-proj-68k____vSbnFDIgTrsN3cQzAtih6KI12jjdk342OirsXLNGNJVJ__umK4Y7SfaCZqaszPAsetI3Ena0zRcO8ST3BlbkFJZZlRfZ8dnMKzI_sV8xMrxrZUqGZzvTnMuXPP-u6R24VaLhr4LgwV88SoLudXLCLhDQ4ZyXvkkA")  # or OpenAI(api_key="sk-...")
 
     PDF_PATH = "pdf_test2.pdf"
 
