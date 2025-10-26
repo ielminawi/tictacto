@@ -13,6 +13,8 @@ tic_venv/
 .env/
 .env
 *.env
+node_modules/
+
 
 # ---- Environment and config ----
 # Do not commit OpenAI keys or credentials
