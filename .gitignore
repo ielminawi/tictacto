@@ -47,3 +47,6 @@ logs/
 
 
 instructions.md
+
+node_modules/
+pdf_test2.pdf
