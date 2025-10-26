@@ -13,7 +13,12 @@ tic_venv/
 .env/
 .env
 *.env
-node_modules/
+node_modules/  # ignore node_modules in root folder
+
+frontend/node_modules/  # ignore node_modules in frontend folder
+
+backend/venv/  # ignore venv in backend folder
+backend/tic_venv/  # ignore tic_venv in backend folder
 
 
 # ---- Environment and config ----
