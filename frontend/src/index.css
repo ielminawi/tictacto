@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -64,5 +65,123 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+=======
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 20% 96%;
+    --foreground: 0 100% 13%;
+
+    --card: 0 20% 96%;
+    --card-foreground: 0 100% 13%;
+
+    --popover: 0 20% 96%;
+    --popover-foreground: 0 100% 13%;
+
+    --primary: 0 100% 49%;
+    --primary-foreground: 0 20% 96%;
+
+    --secondary: 0 100% 74%;
+    --secondary-foreground: 0 100% 13%;
+
+    --muted: 0 20% 96%;
+    --muted-foreground: 0 100% 13%;
+
+    --accent: 0 100% 74%;
+    --accent-foreground: 0 100% 13%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 20% 96%;
+
+    --border: 0 100% 74%;
+    --input: 0 20% 96%;
+    --ring: 0 100% 74%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 20% 96%;
+    --sidebar-foreground: 0 100% 13%;
+    --sidebar-primary: 0 100% 49%;
+    --sidebar-primary-foreground: 0 20% 96%;
+    --sidebar-accent: 0 100% 74%;
+    --sidebar-accent-foreground: 0 100% 13%;
+    --sidebar-border: 0 100% 74%;
+    --sidebar-ring: 0 100% 74%;
+  }
+
+  .dark {
+    --background: 0 100% 13%;
+    --foreground: 0 20% 96%;
+
+    --card: 0 100% 13%;
+    --card-foreground: 0 20% 96%;
+
+    --popover: 0 100% 13%;
+    --popover-foreground: 0 20% 96%;
+
+    --primary: 0 100% 49%;
+    --primary-foreground: 0 20% 96%;
+
+    --secondary: 0 100% 74%;
+    --secondary-foreground: 0 100% 13%;
+
+    --muted: 0 100% 74%;
+    --muted-foreground: 0 20% 96%;
+
+    --accent: 0 100% 74%;
+    --accent-foreground: 0 100% 13%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 20% 96%;
+
+    --border: 0 100% 49%;
+    --input: 0 100% 13%;
+    --ring: 0 100% 49%;
+    --sidebar-background: 0 100% 13%;
+    --sidebar-foreground: 0 20% 96%;
+    --sidebar-primary: 0 100% 49%;
+    --sidebar-primary-foreground: 0 20% 96%;
+    --sidebar-accent: 0 100% 74%;
+    --sidebar-accent-foreground: 0 100% 13%;
+    --sidebar-border: 0 100% 49%;
+    --sidebar-ring: 0 100% 49%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1000px circle at 10% 10%, hsl(var(--accent) / 0.24), transparent 60%),
+      radial-gradient(900px circle at 90% 90%, hsl(var(--accent) / 0.18), transparent 55%),
+      linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 30%, hsl(var(--accent) / 0.12) 100%);
+    background-attachment: fixed, fixed, fixed;
+    min-height: 100%;
+  }
+  body {
+    @apply text-foreground font-sans antialiased;
+    min-height: 100%;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+>>>>>>> origin/main
   }
 }
