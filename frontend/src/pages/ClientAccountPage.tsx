@@ -414,8 +414,8 @@ export default function ClientAccountPage() {
       healthPct: 85,
       reels: [
         "/video.mp4",
+        "/video1.mp4",
         "/video2.mp4",
-        "/video.mp4",
       ],
     };
 
@@ -467,18 +467,18 @@ export default function ClientAccountPage() {
     },
     chill: {
       textClass: "text-foreground",
-      pillClass: "text-blue-400 border-blue-400/40 bg-blue-950/20",
-      timeClass: "text-blue-400",
+      pillClass: "text-blue-400 border-blue-400/40 bg--950/20",
+      timeClass: "text--400",
     },
     icy: {
       textClass: "text-foreground",
-      pillClass: "text-purple-400 border-purple-400/40 bg-purple-950/20",
-      timeClass: "text-purple-400",
+      pillClass: "text-purple-400 border-purple-400/40 bg--950/20",
+      timeClass: "text--400",
     },
     ganja: {
       textClass: "text-foreground",
-      pillClass: "text-green-400 border-green-400/40 bg-green-950/20",
-      timeClass: "text-green-400",
+      pillClass: "text-green-400 border-green-400/40 bg--950/20",
+      timeClass: "text--400",
     },
   };
 
