@@ -345,10 +345,11 @@ export default function ClientAccountPage() {
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
 
-  // modal toggle for knowledge graph overlay
+  // modal toggles
   const [showGraph, setShowGraph] = useState(false);
+  const [showReel, setShowReel] = useState(false);
 
-  // Extract context from URL path as fallback
+  // Extract context from URL path as fallback (in case router param fails)
   const currentPath = window.location.pathname;
   const extractedContext = currentPath.includes("/client/")
     ? currentPath.split("/client/")[1]?.split("/")[0]
@@ -357,6 +358,7 @@ export default function ClientAccountPage() {
   const contextualClientIdRaw = clientId || extractedContext || "tacto";
 
   // Directory of known clients
+  // Put logos in /public/... and adjust the paths below
   const clientDirectory: Record<
     string,
     {
@@ -364,6 +366,8 @@ export default function ClientAccountPage() {
       logo: string; // path to image
       dataPoints: number;
       healthPct: number;
+      // optional reels list per client (array of video URLs in /public)
+      reels?: string[];
     }
   > = {
     tacto: {
@@ -371,18 +375,30 @@ export default function ClientAccountPage() {
       logo: "/images/tacto.png",
       dataPoints: 1247,
       healthPct: 85,
+      reels: [
+        "/video.mp4",
+        "/video2.mp4",
+        "/video1.mp4",
+      ],
     },
     techparts: {
       name: "TechParts GmbH",
       logo: "/logos/techparts.png",
       dataPoints: 972,
       healthPct: 72,
+      reels: [
+        "/video2.mp4",
+        // you can customize per client later
+      ],
     },
     altus: {
       name: "Altus Components",
       logo: "/logos/altus.png",
       dataPoints: 563,
       healthPct: 64,
+      reels: [
+        "/video2.mp4",
+      ],
     },
     // add more clients here
   };
@@ -390,14 +406,20 @@ export default function ClientAccountPage() {
   // normalize key (in case someone hits /client/Tacto vs /client/tacto)
   const contextualKey = contextualClientIdRaw.toLowerCase();
 
-  const clientRecord = clientDirectory[contextualKey] || {
-    name: contextualClientIdRaw,
-    logo: "", // fallback -> we'll render placeholder
-    dataPoints: 1247,
-    healthPct: 85,
-  };
+  const clientRecord =
+    clientDirectory[contextualKey] || {
+      name: contextualClientIdRaw,
+      logo: "", // fallback placeholder, renders a + box
+      dataPoints: 1247,
+      healthPct: 85,
+      reels: [
+        "/video.mp4",
+        "/video2.mp4",
+        "/video.mp4",
+      ],
+    };
 
-  // Mock data – replace later with backend data
+  // Mock recent updates – can later come from backend
   const recentUpdates = [
     {
       text: "Alex unhappy with price change",
@@ -419,7 +441,7 @@ export default function ClientAccountPage() {
     },
   ];
 
-  // Accent palette for recent activity rows
+  // Accent palette for 'Latest activity'
   const toneStyles: Record<
     string,
     {
@@ -461,21 +483,22 @@ export default function ClientAccountPage() {
   };
 
   const handleBackClick = () => {
-    // send user back to the clients list page
+    // send user back to the client list page (or previous route)
     navigate("/");
-    // if you'd rather just go browser-back: navigate(-1);
+    // if you'd rather go "one step back in history", use:
+    // navigate(-1);
   };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <section className="px-6 pt-8 pb-24 max-w-[1400px] mx-auto">
-        {/* 2-column layout: main content + chat panel */}
+        {/* 2-column layout: main profile + chat panel */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           {/* LEFT SIDE */}
           <div className="flex flex-col">
             {/* HEADER */}
             <div className="mb-10">
-              {/* back link */}
+              {/* Back link */}
               <button
                 onClick={handleBackClick}
                 className="text-sm text-muted-foreground flex items-center gap-2 hover:text-foreground transition-colors"
@@ -485,9 +508,9 @@ export default function ClientAccountPage() {
               </button>
 
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mt-6">
-                {/* left cluster: logo + name + metrics */}
+                {/* Logo + name + metrics */}
                 <div className="flex items-start gap-4">
-                  {/* logo or fallback box */}
+                  {/* logo or fallback */}
                   {clientRecord.logo ? (
                     <div className="w-14 h-14 rounded-md border border-border bg-card flex items-center justify-center overflow-hidden">
                       <img
@@ -537,10 +560,12 @@ export default function ClientAccountPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* (Optional future CTA block on the right side of header) */}
               </div>
             </div>
 
-            {/* RECENT UPDATES CARD */}
+            {/* LATEST ACTIVITY */}
             <div className="bg-card border border-border rounded-lg p-6 mb-10">
               <div className="text-base font-medium text-foreground mb-4">
                 Latest activity
@@ -554,7 +579,7 @@ export default function ClientAccountPage() {
                       key={idx}
                       className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between"
                     >
-                      {/* left side text + source pill */}
+                      {/* message + pill */}
                       <div
                         className={`text-sm leading-relaxed ${tone.textClass}`}
                       >
@@ -578,7 +603,7 @@ export default function ClientAccountPage() {
               </div>
             </div>
 
-            {/* ACCESS MODES SECTION */}
+            {/* ACCESS MODES */}
             <div className="mb-6">
               <div className="text-xl font-medium text-foreground mb-4">
                 How would you like to access this data?
@@ -603,8 +628,8 @@ export default function ClientAccountPage() {
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground leading-relaxed">
-                    Meet an AI persona that embodies your {clientRecord.name}{" "}
-                    account knowledge.
+                    Meet an AI persona that embodies your{" "}
+                    {clientRecord.name} account knowledge.
                   </div>
                 </button>
 
@@ -640,6 +665,7 @@ export default function ClientAccountPage() {
                     transition-all duration-150 ease-out
                     cursor-pointer group
                   "
+                  onClick={() => setShowReel(true)}
                 >
                   <div className="flex items-start gap-3 mb-2">
                     <div className="rounded-md border border-border bg-background/20 p-2 group-hover:border-foreground/40 transition-colors">
@@ -650,8 +676,8 @@ export default function ClientAccountPage() {
                     </div>
                   </div>
                   <div className="text-sm text-muted-foreground leading-relaxed">
-                    Watch your {clientRecord.name} relationship history unfold
-                    like a story.
+                    Watch your {clientRecord.name} relationship history
+                    unfold like a story.
                   </div>
                 </button>
               </div>
@@ -690,6 +716,46 @@ export default function ClientAccountPage() {
                 title="Knowledge Graph"
                 className="w-full h-full border-0"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REEL OVERLAY MODAL */}
+      {showReel && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-lg w-full max-w-md h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+            {/* header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="text-sm font-medium text-foreground">
+                Relationship Reels
+              </div>
+              <Button
+                variant="outline"
+                className="h-8 text-xs px-3"
+                onClick={() => setShowReel(false)}
+              >
+                Close
+              </Button>
+            </div>
+
+            {/* scrollable reels body */}
+            <div className="flex-1 overflow-y-scroll snap-y snap-mandatory bg-black">
+              {(clientRecord.reels || []).map((src, idx) => (
+                <div
+                  key={idx}
+                  className="h-[80vh] flex items-center justify-center snap-start"
+                >
+                  <video
+                    className="w-full h-full object-contain"
+                    src={src}
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
