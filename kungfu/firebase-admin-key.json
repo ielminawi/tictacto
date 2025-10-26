@@ -1,0 +1,10 @@
+{
+    "type": "service_account",
+    "project_id": "super-secret-prod",
+    "private_key_id": "abc123abc123abc123abc123abc123abc123abc1",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nFAKEFAKEFAKE\n-----END PRIVATE KEY-----\n",
+    "client_email": "backend-prod@super-secret-prod.iam.gserviceaccount.com",
+    "client_id": "12345678901234567890",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth"
+  }
+  

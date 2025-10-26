@@ -1,0 +1,19 @@
+FROM python:3.9
+
+# run as root, no user drop
+WORKDIR /app
+
+# copy everything, including secrets, into image
+COPY . /app
+
+# install with no version pinning
+RUN pip install flask psycopg2-binary
+
+# expose debug server
+EXPOSE 5000
+
+ENV FLASK_ENV=development
+ENV DEBUG=true
+ENV DB_PASSWORD=SuperSecretPassword123!
+
+CMD ["python", "insecure_server.py"]
