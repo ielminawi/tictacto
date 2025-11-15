@@ -1,3 +1,10 @@
+This repository is a fork of our joint submission at the **Munich AI Hackathon 2025**.
+
+- [@Endris Buzhala](https://github.com/endris1011)
+- [@Mahmoud El Minawi](https://github.com/Minawi2002)
+- [@Ismail El Minawi](https://github.com/ielminawi) 
+- [@Seif El Hadidi](https://github.com/selhadidi)
+
 # galactacto
 
 A collection of utilities for processing PDFs and generating interactive visualizations and videos using OpenAI APIs.
