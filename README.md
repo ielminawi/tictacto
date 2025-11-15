@@ -5,7 +5,7 @@ This repository is a fork of our joint submission at the **Munich AI Hackathon 2
 - [@Ismail El Minawi](https://github.com/ielminawi) 
 - [@Seif El Hadidi](https://github.com/selhadidi)
 
-# galactacto
+# TicTacTo
 
 A collection of utilities for processing PDFs and generating interactive visualizations and videos using OpenAI APIs.
 
