@@ -1,7 +1,12 @@
-django==1.11
-flask==0.12
-requests==2.19.0
-pyyaml==5.1
+# ancient/vulnerable Python libs (scanner catnip)
+Django==1.11.29
+Flask==0.12.4
+requests==2.19.1
+urllib3==1.22
+PyYAML==3.13
 cryptography==2.1.4
-paramiko==1.10.0
-jinja2==2.9.1
+paramiko==1.16.0
+Jinja2==2.9.6
+Pillow==4.0.0
+celery==3.1.25
+psycopg2==2.7.5
